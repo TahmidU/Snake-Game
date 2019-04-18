@@ -34,6 +34,22 @@ class snake:
             self.tail.next = self.node(x, y)
             self.tail = self.tail.next
 
+    def addToHead(self, x, y):
+        if self.isEmpty():
+            self.head = self.node(x,y)
+            self.tail = self.head
+        else:
+            self.head = self.node(x,y,self.head)
+
+    def countNodes(self):
+        self.count = 0
+        self.aux = self.head
+        while(self.aux != None):
+            self.count = self.count + 1
+            self.aux = self.aux.next
+        print(self.count)
+        return self.count
+
     def __init__(self, x, y):
         self.addToTail(x, y)
 
@@ -92,75 +108,46 @@ class game:
                 if pressed != pygame.K_w:
                     pressed = pygame.K_s
 
-             
+            if player.tail.x == apple.x and player.tail.y == apple.y:
+                player.addToHead(player.head.x, player.head.y)
+                apple = food()         
 
-                 
+            aux = player.head
+            while(aux != None):
+                if aux.next != None:
+                    aux.x = aux.next.x-10
+                    aux.y = aux.next.y
+                aux = aux.next
+
+            if player.head != None:
+                player.head.x = player.tail.x
+                player.head.y = player.tail.y
+
             #Player movement
-            if pressed == pygame.K_a:
-                aux = player.head #Pointer for linked list
-                aux.prev_x = aux.x
-                aux.prev_y = aux.y
-                while(aux != None):
-                    if aux.next != None:
-                        aux.next.x = aux.prev_x
-                        aux.next.y = aux.prev_y
-                        aux.next.prev_x = aux.next.x
-                        aux.next.prev_y = aux.next.y
-                    aux = aux.next    
-                player.head.x = player.head.x - player.snake_width
+            if pressed == pygame.K_a:    
+                player.tail.x = player.tail.x - player.snake_width
             if pressed == pygame.K_d:
-                aux = player.head #Pointer for linked list
-                aux.prev_x = aux.x
-                aux.prev_y = aux.y
-                while(aux != None):
-                    if aux.next != None:
-                        aux.next.x = aux.prev_x
-                        aux.next.y = aux.prev_y
-                        aux.next.prev_x = aux.next.x
-                        aux.next.prev_y = aux.next.y
-                    aux = aux.next
-                player.head.x = player.head.x + player.snake_width
+                player.tail.x = player.tail.x + player.snake_width
             if pressed == pygame.K_w:
-                aux = player.head #Pointer for linked list
-                aux.prev_x = aux.x
-                aux.prev_y = aux.y
-                while(aux != None):
-                    if aux.next != None:
-                        aux.next.x = aux.prev_x
-                        aux.next.y = aux.prev_y
-                        aux.next.prev_x = aux.next.x
-                        aux.next.prev_y = aux.next.y
-                    aux = aux.next
-                player.head.y = player.head.y - player.snake_height
+                player.tail.y = player.tail.y - player.snake_height
             if pressed == pygame.K_s:
-                aux = player.head #Pointer for linked list
-                aux.prev_x = aux.x
-                aux.prev_y = aux.y
-                while(aux != None):
-                    if aux.next != None:
-                        aux.next.x = aux.prev_x
-                        aux.next.y = aux.prev_y
-                        aux.next.prev_x = aux.next.x
-                        aux.next.prev_y = aux.next.y
-                    aux = aux.next
-                player.head.y = player.head.y + player.snake_height
+                player.tail.y = player.tail.y + player.snake_height
             
-            if player.head.x == apple.x and player.head.y == apple.y:
-                player.addToTail(player.tail.x, player.tail.y)
-                apple = food()
+  
 
             aux = player.head
             count = 0
             while(aux != None):
                 count = count + 1
-                print("This is " + str(count) + " and its x pos is: " + str(aux.x))
+                #print("This is " + str(count) + " and its x pos is: " + str(aux.x))
                 aux = aux.next
             #print(count)    
             
             #draw food
             pygame.draw.rect(screen, apple.food_colour, (apple.x, apple.y, apple.food_width, apple.food_height))
 
-            aux = player.head #Pointer for linked list
+            #draw snake
+            aux = player.head
             while(aux != None):
                 pygame.draw.rect(screen, player.snake_color, (aux.x, aux.y, player.snake_width, player.snake_height))
                 aux = aux.next
